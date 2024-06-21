@@ -18,7 +18,8 @@ _**Include all necessary information only as per the given format.**_
   - All successful project submissions earn the Womanium Project Certificate.
 
 ### Project Description:
-Click [here](https://docs.google.com/document/d/1LP5jGrlZ8ViFeL85GU1AHfkWWjlzkIJglOGALznUHTA/edit?usp=sharing) to view the project description.
+  - Click [here](https://drive.google.com/file/d/1yoY_venPkNStjcDu0Na0HYhgO6CvVYdM/view?usp=sharing) to view the project description.
+  - YouTube recording of project description - [link]()
 
 ## Project Submission:
 All information in this section will be considered for project submission and judging.
