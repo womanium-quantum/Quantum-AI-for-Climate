@@ -15,8 +15,8 @@ _**Include all necessary information only as per the given format.**_
   - All nationalities, genders, and age groups are welcome to participate in the projects.
   - All team participants must be enrolled in Womanium Quantum+AI 2024.
   - Everyone is eligible to participate in this project and win Womanium grants.
-  - Only US Citizens will be selected for Womanium QSL fellowships with NNL.
   - All successful project submissions earn the Womanium Project Certificate.
+  - Best participants win Womanium QSL fellowships with NNL. Please review the eligibility criteria for QSL fellowships in the project description below.
 
 ### Project Description:
   - Click [here](https://drive.google.com/file/d/1yoY_venPkNStjcDu0Na0HYhgO6CvVYdM/view?usp=sharing) to view the project description.
