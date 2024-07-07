@@ -1,6 +1,8 @@
 # Quantum-AI-for-Climate
 Womanium Quantum+AI 2024 Projects
 
+**Please review the participation guidelines [here](https://github.com/womanium-quantum/Quantum-AI-2024) before starting the project.**
+
 _**Do NOT delete/ edit the format of this read.me file.**_
 
 _**Include all necessary information only as per the given format.**_
