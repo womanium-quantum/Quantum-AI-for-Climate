@@ -39,12 +39,12 @@ Team Member 1: Benjamin Kroul
  - Nationality: United States
  - Current affiliation: Undergraduate @ Stanford
 
-Team Member 2: _(full name)_
- - Email:
- - Discord ID:
- - GitHub ID:
- - Nationality:
- - Current affiliation:
+Team Member 2: Xin Lan Zheng
+ - Email: xlz1047@gmail.com
+ - Discord ID: xinzheng.
+ - GitHub ID: xlz1047
+ - Nationality: United States
+ - Current affiliation: Undergraduate @ Drexel
 
 Team Member 3: _(full name)_
  - Email:
