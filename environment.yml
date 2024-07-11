@@ -9,6 +9,7 @@ dependencies:
   - python==3.11 
   - matplotlib
   - numpy
+  - ipykernel  # for jupyter notebooks
   - networkx  # for general graphs
   - pyvis   # conda-forge::
   - pytorch  # for GNN
