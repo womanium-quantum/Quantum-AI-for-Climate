@@ -32,16 +32,20 @@ Ensure your repository is public and submitted by **August 9, 2024, 23:59pm US E
 Ensure your repository does not contain any personal or team tokens/access information to access backends. Ensure your repository does not contain any third-party intellectual property (logos, company names, copied literature, or code). Any resources used must be open source or appropriately referenced.
 
 ### Team Information:
-Team Member 1: Benjamin Kroul
+Team Member 1: 
+ - Full Name: Benjamin Kroul
+ - Womanium Program Enrollment ID: WQ24-x7CcgxUOPWpvHVd
+
+Team Member 2: 
+ - Full Name: Xin Lan Zheng
  - Womanium Program Enrollment ID: WQ24-
 
-Team Member 2: Xin Lan Zheng
+Team Member 3: 
+ - Full Name:
  - Womanium Program Enrollment ID: WQ24-
 
-Team Member 3: _(full name)_
- - Womanium Program Enrollment ID: WQ24-
-
-Team Member 4: _(full name)_
+Team Member 4: 
+ - Full Name: 
  - Womanium Program Enrollment ID: WQ24-
 
 ### Project Solution:
