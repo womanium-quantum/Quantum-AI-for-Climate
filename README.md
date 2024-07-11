@@ -33,32 +33,16 @@ Ensure your repository does not contain any personal or team tokens/access infor
 
 ### Team Information:
 Team Member 1: Benjamin Kroul
- - Email: benkroul@stanford.edu
- - Discord ID: picklenchips
- - GitHub ID: picklenchips
- - Nationality: United States
- - Current affiliation: Undergraduate @ Stanford
+ - Womanium Program Enrollment ID: WQ24-
 
 Team Member 2: Xin Lan Zheng
- - Email: xlz1047@gmail.com
- - Discord ID: xinzheng.
- - GitHub ID: xlz1047
- - Nationality: United States
- - Current affiliation: Undergraduate @ Drexel
+ - Womanium Program Enrollment ID: WQ24-
 
 Team Member 3: _(full name)_
- - Email:
- - Discord ID:
- - GitHub ID:
- - Nationality:
- - Current affiliation:
+ - Womanium Program Enrollment ID: WQ24-
 
 Team Member 4: _(full name)_
- - Email:
- - Discord ID:
- - GitHub ID:
- - Nationality:
- - Current affiliation:
+ - Womanium Program Enrollment ID: WQ24-
 
 ### Project Solution:
 _Include a comprehensive summary of all important information about your project solution here._
