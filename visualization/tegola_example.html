@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/ol@v7.1.0/dist/ol.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/ol@v7.1.0/ol.css"
+    />
+    <style>
+      #map {
+        height: 600px;
+        width: 100%;
+        background-color: #1c79b5;
+      }
+    </style>
+    <title>OpenLayers example</title>
+  </head>
+  <body>
+    <div id="map" class="map"></div>
+    <script type="text/javascript">
+      var defaultStyle = new ol.style.Style({
+        fill: new ol.style.Fill({
+          color: [234, 231, 221, 1],
+        }),
+        stroke: new ol.style.Stroke({
+          color: [182, 177, 162, 1],
+          width: 1,
+        }),
+      });
+
+      var waterStyle = new ol.style.Style({
+        fill: new ol.style.Fill({
+          color: [28, 121, 181, 1],
+        }),
+        stroke: new ol.style.Stroke({
+          color: [27, 107, 159, 1],
+          width: 1,
+        }),
+      });
+
+      var streetStyle = new ol.style.Style({
+        fill: new ol.style.Fill({
+          color: [111, 44, 173, 1],
+        }),
+        stroke: new ol.style.Stroke({
+          color: [93, 32, 150, 1],
+          width: 1,
+        }),
+      });
+
+      function styleFunction(feature, resolution) {
+        if (
+          feature.get("type") == "water" ||
+          feature.get("layer") == "water_areas" ||
+          feature.get("layer") == "water_lines"
+        ) {
+          return [waterStyle];
+        }
+        if (feature.get("layer") == "transport_lines") {
+          return [streetStyle];
+        }
+        if (
+          feature.get("layer") == "country_polygons" ||
+          feature.get("layer") == "landuse_areas"
+        ) {
+          return null; // return null for no style to be applied
+        }
+        return [defaultStyle];
+      }
+
+      var map = new ol.Map({
+        target: "map",
+        layers: [
+          new ol.layer.VectorTile({
+            source: new ol.source.VectorTile({
+              format: new ol.format.MVT(),
+              url: "https://tegola-osm-demo.go-spatial.org/maps/osm/{z}/{x}/{y}.pbf",
+            }),
+            style: styleFunction,
+          }),
+        ],
+        view: new ol.View({
+          //coordinates the map will center on initially
+          center: ol.proj.fromLonLat([-117.15, 32.72]),
+          zoom: 14,
+        }),
+      });
+    </script>
+  </body>
+</html>
