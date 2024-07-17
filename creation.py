@@ -43,7 +43,7 @@ class Node:
 
 class Edge:
     def __init__(self, edgeId: int, node1: Node, node2: Node,
-                 capacity: 100.0):
+                 capacity=100.0):
         self.edgeId = edgeId
         self.node1 = node1
         self.node2 = node2
