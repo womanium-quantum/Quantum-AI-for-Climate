@@ -7,10 +7,22 @@ channels:
 dependencies:
   # classiq only runs up to 3.11, not 3.12
   - python==3.11 
-  - matplotlib
-  - numpy
   - ipykernel  # for jupyter notebooks
+  - matplotlib
+  - plotly
+  - numpy
+# PANDAPOWER REQUIREMENTS
+  - pandapower
+  - pytest
+  - scipy
+  - pandas
+  - packaging
+  - tqdm
+  - deepdiff
   - networkx  # for general graphs
+  - numba
+  - pandapower
+# OTHERS
   - pyvis   # conda-forge::
   - pytorch  # for GNN
   # to install classiq:
