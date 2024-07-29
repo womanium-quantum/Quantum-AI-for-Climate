@@ -1,17 +1,16 @@
-# can create new miniconda/anaconda environment using
-# conda env create -f environment.yml; conda activate qpowergrid
-name: qpowergrid
+# to create new miniconda/anaconda environment:
+## conda env create -f environment.yml; conda activate qpowergrid
+name: qpgrid
 channels:
   - defaults
   - conda-forge
 dependencies:
-  # classiq only runs up to 3.11, not 3.12
+# classiq only runs up to 3.11, not 3.12
+# so we only install python up to 3.11
   - python==3.11 
   - ipykernel  # for jupyter notebooks
-  - matplotlib
-  - plotly
   - numpy
-# PANDAPOWER REQUIREMENTS
+# PANDAPOWER + REQUIREMENTS
   - pandapower
   - pytest
   - scipy
@@ -19,15 +18,27 @@ dependencies:
   - packaging
   - tqdm
   - deepdiff
+  - psycopg2  # PostgreSQL adapter
   - networkx  # for general graphs
-  - numba
-  - pandapower
-# OTHERS
-  - pyvis   # conda-forge::
-  - pytorch  # for GNN
-  # to install classiq:
-  - pip  # to install classiq
-  - pip:
-    - classiq  
+  - numba     # improves performance
+  - ortools   # google mixed-integer programming optimization tools
+### pandapower.plotting
+  - python-igraph
+  - geopandas
+  - geojson
+# PLOTTING
+  - matplotlib
+  - python-igraph  # plotting
+  - plotly
+  - nbformat       # plotly in ipynb
+# QUANTUM
+#  - pip  # to install classiq
+#  - pip:
+#    - classiq  
   # or qiskit:
-  - qiskit-terra  # conda-forge::
+#  - qiskit-terra  # conda-forge::
+#  - dwave-ocean-sdk
+# OTHERS
+#  - pyvis   # conda-forge::
+#  - pytorch  # for GNN
+  # to install classiq:
