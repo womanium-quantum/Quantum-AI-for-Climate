@@ -10,6 +10,8 @@ dependencies:
   - python==3.11 
   - ipykernel  # for jupyter notebooks
   - numpy
+# DOWNLOAD FROM OSM
+  - requests
 # PANDAPOWER + REQUIREMENTS
   - pandapower
   - pytest
