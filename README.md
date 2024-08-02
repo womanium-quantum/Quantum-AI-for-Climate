@@ -52,6 +52,18 @@ Team Member 4:
 _Include a comprehensive summary of all important information about your project solution here._
 All necessary code files and any additional information required to judge your project solution should be included in the repository. 
 
+
+For this project, we want to show the potential of quantum computing to optimizing the modern electrical grid. 
+We want to make an accessible portal to show others this potential and pave a pathway for current grid providers to consider quantum computing solutions when planning grid modernization. 
+
+1. Translate from inputs of OSM power data or ___ to a `pandapower` network
+1. Run various optimization algorithms on the network classically. 
+1. Use D-Wave quantum annealing to accelerate the optimizations with quantum computing
+
+We solve the following optimization problems with quantum methods:
+1. Microgrid formation from predicted load
+1. Optimal power flow equation solving
+
 ### Project Presentation Deck:
 _Link a 5min. presentation recording or deck here._
 
