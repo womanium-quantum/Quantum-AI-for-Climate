@@ -1,13 +1,15 @@
 """
-Defines useful utility functions and constants. Run printModule(util) after importing to see dirs
+Created by Ben Kroul, in 2024
+
+Defines useful utility functions and constants. Run printModule(util) after importing to see full list of imports.
 - CVALS: object of physics constants
 - printModule
 - timeIt
 - binarySearch
 - linearInterpolate
-- uFormat
-- RSquared
-- NRME
+- uFormat: PDG-style formatting of numbers with uncertainty, or just to significant figures
+- RSquared, NRMSE
+- FuncWLabels & FuncAdder: objects to fit composite functions for signal modelling. 
 """
 import numpy as np
 from glob import glob
@@ -99,7 +101,7 @@ def timeIt(func):
         return res
     return wrapper
 
-def binarySearch(X_val, X, decreasing=False):
+def binarySearch(X_val, X: list|tuple|np.ndarray, decreasing=False):
     """
     For sorted X, returns index i such that X[:i] < X_val, X[i:] >= X_val
      - if decreasing,returns i such that    X[:i] > X_val, X[i:] <= X_val
@@ -143,7 +145,7 @@ def linearInterpolate(x,X,Y):
     """example: 2D linear interpolate by adding interpolations from both
     - """
     i = binarySearch(x,X)
-    if i == 0: i += 1  # lowest ting, interpolate backwards
+    if i == 0: i += 1  # lowest ting but we interpolate backwards
     m = (Y[i]-Y[i-1])/(X[i]-X[i-1])
     b = Y[i] - m*X[i]
     return m*x + b
@@ -203,17 +205,18 @@ def arrFromString(data, col_separator = '\t', row_separator = '\n'):
 def uFormat(number, uncertainty=0, figs = 4, shift = 0, FormatDecimals = False):
     """
     Returns "num_rounded(with_sgnfcnt_dgts_ofuncrtnty)", formatted to 10^shift
+      or number rounded to figs significant figures if uncertainty = 0
     According to section 5.3 of "https://pdg.lbl.gov/2011/reviews/rpp2011-rev-rpp-intro.pdf"
 
     Arguments:
     - float number:      the value
     - float uncertainty: the absolute uncertainty (stddev) in the value
-       - if zero, will format number to optional number of sig_figs (see figs)
+       - if zero, will just format number to figs significant figures (see figs)
+    - int figs: when uncertainty = 0, format number to degree of sig figs instead
+       - if zero, will simply return number as string
     - int shift:  optionally, shift the resultant number to a higher/lower digit expression
        - i.e. if number is in Hz and you want a string in GHz, specify shift = 9
                likewise for going from MHz to Hz, specify shift = -6
-    - int figs: when uncertainty = 0, format number to degree of sig figs instead
-       - if zero, will simply return number as string
     - bool FormatDecimals:  for a number 0.00X < 1e-2, option to express in "X.XXe-D" format
              for conciseness. doesnt work in math mode because '-' is taken as minus sign
     """
@@ -227,7 +230,7 @@ def uFormat(number, uncertainty=0, figs = 4, shift = 0, FormatDecimals = False):
     if num[0] == '-':
         num = num[1:]
         negative = True
-    if err[0] == '-':
+    if err[0] == '-':  # stddev is symmetric ab number
         err = err[1:]
     
     # ni = NUM DIGITS to the RIGHT of DECIMAL
@@ -330,7 +333,7 @@ def uFormat(number, uncertainty=0, figs = 4, shift = 0, FormatDecimals = False):
         else:
             Err = '0'
     if ni >= ei: ni = ei  # indicate number has been rounded
-    
+
     n = len(Num)
     # if were at <= e-3 == 0.009, save formatting space by removing decimal zeroes
     extraDigs = 0
@@ -343,8 +346,8 @@ def uFormat(number, uncertainty=0, figs = 4, shift = 0, FormatDecimals = False):
     end = ''
 
     # there are digits to the right of decimal and we dont 
-    # care about exact sig figs (to not format floats to 0.02000)
-    if ni > 0 and sigFigsMode:
+    # care about exact sig figs (ex. cut zeroes from 0.02000)
+    if ni > 0 and not sigFigsMode:
         while Num[-1] == '0':
             if len(Num) == 1: break
             Num = Num[:-1]
@@ -443,9 +446,9 @@ class FuncAdder():
        - self.nargs: number of arguments for each function (not including X)
      - ncopies of all functions to add together, or list of ncopies per function
        - self.ncopies:  int OR list of ints
-       - if 0, function is "frozen" and simply added without being fit
+       - if 0, function is "frozen" and added once but IS NOT FIT LATER
        - only works if "frozen" functions are all placed before "unfrozen" ones
-     - initialize coefficients - FULL coeff list given to composite function
+     - initialize coefficients - FULL coeff list given to composite function, including frozies
        - self.coeffs: list of all coeffs
      - name given to the funcAdder (composite function name)
        - self.name
@@ -724,8 +727,10 @@ def plotRaw(arr: np.ndarray | tuple[np.ndarray], title: str, axes_titles: str | 
 
 #print("da master physics/CS folder - good luck code monkey")
 if __name__ == "__main__":
+    # behold my pride and joy - uFormat
     while True:
-        t = input("Enter arguments to uFormat(number, uncertainty, figs=4,shift=0 FormatDecimals=T/F)\n:")
+        t = input("Enter space-separated arguments to uFormat in the order of \n\
+                  number, uncertainty, sig_figs=4, shift=0, FormatDecimals=T/F)\n:")
         if not t:
             break 
         args = t.rstrip().split(' ')

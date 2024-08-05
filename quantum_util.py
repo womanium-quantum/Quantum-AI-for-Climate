@@ -1,3 +1,17 @@
+"""
+Created by Ben Kroul, in 2024
+
+Defines useful utility functions and constants for quantum physics related things. Of note:
+- plot_op and plot_theory_exp for plotting 2D operators and comparing theoretical vs experimental operators
+- pauli matrices defined like pauli_e, sigma_g, etc.
+- number, phase, charge + x basis operators
+- gates, rotation operators, common pulse sequences
+- expectations of operators over states or density matrices
+- full bloch sphere simulation/animation of quantum state under unitary evolution...
+    see example at the end of the file
+"""
+
+
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -67,27 +81,38 @@ def plot_bloch_sphere(ax, frame_number=False, init_angle=False, angle_step=0):
         angle = np.pi*init_angle/180 - 3*np.pi/15 - np.pi/2
         ax.text(np.cos(angle),np.sin(angle),0.8,f"frame: {frame_number}")
 
-def plot_bloch_vector(ax, vec, color="red", add_purity=True):
-    '''Plots vector and purity on thing'''
+def plot_bloch_vector(ax, vec, color="red", add_purity=True, scale_vector=False):
+    ''' plot the 3-vector vec on 3d axis ax with color color
+     if add_purity, shows purity of state at top-left corner of plot
+     if scale_vector, will scale vector magnitude with purity of state '''
     x, y, z = vec
     purity = np.sqrt(x**2+y**2+z**2)
     if purity:  # normalize vector
         xn = x/purity; yn = y/purity; zn = z/purity
     else:
         xn = 0; yn = 0; zn = 0
-    # plot "actual" vector
-    #ax.plot([x,xn],[y,yn],[z,zn],color="black", linewidth=0.5)
+    
+    if scale_vector:
+        ax.plot([x,xn],[y,yn],[z,zn],color="black", linewidth=0.5)
     # normalized vector
     ax.scatter(xn,yn,zn,color=color,marker='o')#,markersize=1)
-    ax.quiver(0,0,0,xn,yn,zn,color=color, linewidth=2, arrow_length_ratio=0.1)
-    # plot cube as lighter color
+    if scale_vector:   # plot "actual" vector
+        ax.quiver(0,0,0,x,y,z,color=color, linewidth=2, arrow_length_ratio=0.1)
+    else:    # plot the unit-normalized vector, which is easier to see
+        ax.quiver(0,0,0,xn,yn,zn,color=color, linewidth=2, arrow_length_ratio=0.1)
+    # plot cube as lighter color by dividing alpha by 2
     lighter_color = mcolors.to_rgba(color)[:3] + (mcolors.to_rgba(color)[3]/2,)
     plot_wf_cube(ax,(0,0,0),(xn,yn,zn),color=lighter_color)
     if add_purity: ax.text(0,0.8,1,f"purity: {uFormat(purity,0)}")
 
-def animate_bloch(states, name, pbar=False, rot_vecs=False,
+def animate_bloch(states, name: str, pbar=False, rot_vecs=[],
                   fps=60, dpi=200, add_purity=True, angle_step=0):
-    '''Animates bloch sphere given states[time] = (x,y,z) '''
+    '''Animates bloch sphere and saves to {SAVEDIR}{name}.mp4
+     states[time] = (x,y,z).  state vector at each time step
+     rot_vecs[time] = (x,y,z) Hamiltonian vector at each time step
+     fps: frames per second to save animation at
+     dpi: dots per inch for resolution of animation
+     add_purity: if True, labels the purity of each frame '''
     nframes = states.shape[0]
     fig = plt.figure(figsize=(12,12))
     fig.tight_layout()
@@ -96,7 +121,7 @@ def animate_bloch(states, name, pbar=False, rot_vecs=False,
         ax.clear()  # remove previous arrows
         plot_bloch_sphere(ax, frame, angle_step=angle_step)
         plot_bloch_vector(ax, states[frame], add_purity=add_purity)
-        if not isinstance(rot_vecs, bool):  # add arrow symbolizing rotation axis
+        if len(rot_vecs):  # add arrow symbolizing rotation axis
             if len(rot_vecs.shape) > 1:
                 plot_bloch_vector(ax, rot_vecs[frame], color="green", add_purity=False)
             else:  # single rotation specified
@@ -108,23 +133,8 @@ def animate_bloch(states, name, pbar=False, rot_vecs=False,
     print('saved animation to',plot_name)
     return ani
 
-def plot_operator(operator, title="_DEF_", saveplot=False, cmap_name="viridis"):
-    fig, axs = plt.subplots(1,2,figsize=(12,6))
-    plt.subplots_adjust(wspace=0.1)
-    ax1, ax2 = axs
-    s1 = ax1.matshow(operator.real, cmap=cmap_name)
-    s2 = ax2.matshow(operator.imag, cmap=cmap_name)
-    ax1.set(xticks=[],yticks=[]); ax1.set_title("Re{ "+title+" }")
-    ax2.set(xticks=[],yticks=[]); ax2.set_title("Im{ "+title+" }")
-    fig.colorbar(s1,ax=ax1); fig.colorbar(s2,ax=ax2)
-    if saveplot:
-        plt_name = SAVEDIR + title.replace(" ","_").replace("$","")+"_2d"+SAVEEXT
-        plt.savefig(plt_name,bbox_inches="tight")
-        print(f'saved figure {plt_name}')
-    plt.show()
-
 def label_str_states(N):
-    """ return ordered string of |00>, |01>, |10>, |11> """
+    """ return ordered string of |00>, |01>, |10>, |11> for N qubits """
     ret = []
     for i in range(2**N):
         string = "$|"
@@ -138,17 +148,18 @@ def label_str_states(N):
         ret.append(string)
     return ret
 
-def plot_op(operators: list, titles=[], saveplot=False, cmap_name="turbo", box_spec=False):
+def plot_op(operators: list|tuple|np.ndarray, titles=[], saveplot=False, cmap_name="turbo", box_spec=False):
     """ Plot 2-dimensional operators
     Inputs: 
-    - operators: takes in ndarray or list of ndarrays 
+    - operators: takes in ndarray or list/tuple of ndarrays 
     - titles: title or list of titles for multiple ops 
     - saveplot: True or string to name file of plot
     - cmap_name: name of mpl.colormap to use
+    - box_spec: if True, will show numbers of matrix elements
     """
-    if not isinstance(operators, list):
+    if not isinstance(operators, list) and not isinstance(operators, tuple):
         operators = [operators]
-    if not isinstance(titles, list):
+    if not isinstance(titles, list) and not isinstance(operators, tuple):
         titles = [titles]
     nops = len(operators)
     fig = plt.figure(figsize=(8,4*nops))
@@ -297,6 +308,8 @@ def d2op(xpts):
     dx=xpts[1]-xpts[0]
     return (np.diag(np.ones(len(xpts)-1),k=1) - 2*np.diag(np.ones(len(xpts)),k=0) + np.diag(np.ones(len(xpts)-1),k=-1))/(dx**2)
 
+# ------- GATE FUNCTIONS ------- #
+
 # idx of qubit is 0 to N-1
 def gate_on_nth(N, idx, gate):
     arr = np.array([1],dtype=complex)
@@ -327,9 +340,6 @@ def rotation_op(theta, vec, N=2):
 def unitary_diag(t, H):
     Ut = np.diag(np.exp(-1j*np.diag(H)*t))
     return Ut
-
-def complex_phase(complex_num):
-    return np.arctan(complex_num.imag / complex_num.real)
 
 # --- SEQUENCES --- #
 
@@ -363,6 +373,8 @@ def CPMG_N_sequence(T, N, H):
     return min_half_pi_y @ wait_half @ op
 
 # --- OPERATOR FUNCTIONALS --- #
+def complex_phase(complex_num):
+    return np.arctan(complex_num.imag / complex_num.real)
 
 def expect_op(operator, psi):
     """ Expectation value of operator over state psi
@@ -372,6 +384,7 @@ def expect_op(operator, psi):
         psi = psi[np.newaxis]
     if psi.shape[0] != operator.shape[0]:  # num rows must be the same
         psi = psi.T
+    # now psi.shape is  (state_dimension, number_of_states)
     # basically compute <psi|operator|psi> for all psis in psi_t
     ret = np.sum(np.conj(psi) * (operator @ psi), axis=0)
     return np.real(ret)
@@ -383,22 +396,23 @@ def expect_op_2(operator, rho):
     if len(rho.shape) == 2:
         rho = rho[np.newaxis]
     assert(rho[0].shape == operator.shape)
+    # now rho.shape is (number_of_states, state_dimension, state_dimension)
     ret = np.trace(operator @ rho, axis1=1, axis2=2)
     return np.real(ret)
 
 #@ timeIt
 def bloch_from_psi(psi_t):
-    """ returns 2D array of shape (times, [x,y,z]) """
+    """ returns 2D array (len(times), 3) """
     return np.array([expect_op(sigma_x, psi_t), expect_op(sigma_y, psi_t), expect_op(sigma_z, psi_t)]).T
 
 #@ timeIt
 def bloch_from_op(rho_t):
-    """ returns 2D array of shape (times, [x,y,z]) """
+    """ returns 2D array (len(times), 3) """
     return np.array([expect_op_2(sigma_x, rho_t), expect_op_2(sigma_y, rho_t), expect_op_2(sigma_z, rho_t)]).T
 
 # use eigenvectors and eigenvalues of diagonalized, time-independent hamiltonian
 def time_independent_H(times, es, evs, psi_0_ev):
-    ''' returns psi(times) from diagonalized H '''
+    ''' returns psi_t from diagonalized H '''
     return np.conj(evs).T @ np.diag(np.exp(-1j * es * times)) @ psi_0_ev
 
 def rabi_hamiltonian(z_omega, x_omega, t, nu):
@@ -422,6 +436,7 @@ if __name__ == "__main__":
     # COMPUTE PSI_T
     psi_0 = np.array([1,0], dtype=complex)
     psi_t = solve_ivp(ddt_psi_t, [times.min(), times.max()], psi_0, t_eval=times).y
+    # psi_t.shape = (2, num_timesteps)
     bloch_states = bloch_from_psi(psi_t)
     Hs = rabi_hamiltonian(z_omega, x_omega, times, nu)
     rot_vecs = bloch_from_op(Hs)
