@@ -32,8 +32,8 @@ Ensure your repository is public and submitted by **August 9, 2024, 23:59pm US E
 Ensure your repository does not contain any personal or team tokens/access information to access backends. Ensure your repository does not contain any third-party intellectual property (logos, company names, copied literature, or code). Any resources used must be open source or appropriately referenced.
 
 ### Team Information:
-Team Member 1: Jessica Omuna Anabor
- - Full Name: 
+Team Member 1: 
+ - Full Name: Jessica Omuna Anabor
  - Womanium Program Enrollment ID (see Welcome Email, format- WQ24-xxxxxxxxxxxxxxx): WQ24-WStowgJdXd9cc0i
 
 Team Member 2:
