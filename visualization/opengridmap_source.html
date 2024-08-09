@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>OpenGridMap</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js"></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        .mapboxgl-ctrl-geocoder {width: 600px!important;}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        #menu {
+        position: absolute;
+        background: #efefef;
+        padding: 10px;
+        font-family: 'Open Sans', sans-serif;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+
+<div id="menu">
+<input id="dark-v11" type="radio" name="rtoggle" value="dark">
+<label for="dark-v11">dark</label>
+<input id="light-v11" type="radio" name="rtoggle" value="light" checked="checked">
+<label for="light-v11">light</label>
+<input id="outdoors-v12" type="radio" name="rtoggle" value="outdoors">
+<label for="outdoors-v12">outdoors</label>
+<input id="streets-v12" type="radio" name="rtoggle" value="streets">
+<label for="streets-v12">streets</label>
+<input id="satellite-streets-v12" type="radio" name="rtoggle" value="satellite">
+<label for="satellite-streets-v12">satellite streets</label>
+</div>
+
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiemFib3AiLCJhIjoiY2xrNWdxd240MWFvMjNjcDFzcnBkdXRuciJ9.IxZ8EwRRSE1qzyoS56sPYw';
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/light-v11',
+        zoom: 4,
+        center: [0, 45],
+        projection: 'globe',
+        attributionControl: false
+    }).addControl(new mapboxgl.AttributionControl({
+        customAttribution: '<a href="https://opengridmap.org/about">About OpenGridMap</a> | <a href="https://openinframap.org/">Open Infrastructure Map</a>'
+    }));
+
+    function addLayers() {
+
+        map.setFog({});
+
+        map.addSource('tileset', {
+            type: 'vector',
+            tiles: ['https://openinframap.org/tiles/{z}/{x}/{y}.pbf'], // Replace with your tileset URL
+            tileSize: 512
+        });
+        map.addSource('mapbox-dem', {
+            'type': 'raster-dem',
+            'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+            'tileSize': 512,
+            'maxzoom': 14
+        });
+        map.setTerrain({ 'source': 'mapbox-dem' });
+        map.addLayer({
+            id: 'unknownkV',
+            type: 'line',
+            source: 'tileset',
+            'source-layer': 'power_line',
+            paint: {
+                'line-width': 1,
+                'line-color': "#bd940d"
+            },
+            filter: ['!', ['has', 'voltage']]
+        });
+        // voltage boundaries below are based on: https://github.com/openinframap/openinframap/blob/369af66b7c57f8d7177b71aba4835240e723339c/web-backend/data.py#L10.
+        map.addLayer({
+            id: '0to10kV',
+            type: 'line',
+            source: 'tileset',
+            'source-layer': 'power_line',
+            paint: {
+                'line-width': 1.125,
+                'line-color': "#f084fc"
+            },
+            filter: ['all', ['>=', ['number', ['get', 'voltage']], 0], ['<', ['number', ['get', 'voltage']], 10]]
+        });
+        map.addLayer({
+            id: '10to25kV',
+            type: 'line',
+            source: 'tileset',
+            'source-layer': 'power_line',
+            paint: {
+                'line-width': 1.25,
+                'line-color': "#b601ce"
+            },
+            filter: ['all', ['>=', ['number', ['get', 'voltage']], 10], ['<', ['number', ['get', 'voltage']], 25]]
+        });
+        map.addLayer({
+            id: '25to52kV',
+            type: 'line',
+            source: 'tileset',
+            'source-layer': 'power_line',
+            paint: {
+                'line-width': 1.375,
+                'line-color': "#81ce6c"
+            },
+            filter: ['all', ['>=', ['number', ['get', 'voltage']], 25], ['<', ['number', ['get', 'voltage']], 52]]
+        });
+        map.addLayer({
+            id: '52to132kV',
+            type: 'line',
+            source: 'tileset',
+            'source-layer': 'power_line',
+            paint: {
+                'line-width': 1.5,
+                'line-color': "#238a05"
+            },
+            filter: ['all', ['>=', ['number', ['get', 'voltage']], 52], ['<', ['number', ['get', 'voltage']], 132]]
+        });
+        map.addLayer({
+            id: '132to220kV',
+            type: 'line',
+            source: 'tileset',
+            'source-layer': 'power_line',
+            paint: {
+                'line-width': 1.625,
+                'line-color': "#758ef1"
+            },
+            filter: ['all', ['>=', ['number', ['get', 'voltage']], 132], ['<', ['number', ['get', 'voltage']], 220]]
+        });
+        map.addLayer({
+            id: '220to330kV',
+            type: 'line',
+            source: 'tileset',
+            'source-layer': 'power_line',
+            paint: {
+                'line-width': 1.75,
+                'line-color': "#030fa1"
+            },
+            filter: ['all', ['>=', ['number', ['get', 'voltage']], 220], ['<', ['number', ['get', 'voltage']], 330]]
+        });
+        map.addLayer({
+            id: '330to550kV',
+            type: 'line',
+            source: 'tileset',
+            'source-layer': 'power_line',
+            paint: {
+                'line-width': 1.875,
+                'line-color': "#ea0505"
+            },
+            filter: ['all', ['>=', ['number', ['get', 'voltage']], 330], ['<', ['number', ['get', 'voltage']], 550]]
+        });
+        map.addLayer({
+            id: '550andAbovekV',
+            type: 'line',
+            source: 'tileset',
+            'source-layer': 'power_line',
+            paint: {
+                'line-width': 2,
+                'line-color':  "#940000"
+            },
+            filter: ['all', ['>=', ['number', ['get', 'voltage']], 550]]
+        });
+        map.addLayer({
+            id: 'all',
+            type: 'line',
+            source: 'tileset',
+            'source-layer': 'power_line',
+            paint: {
+                'line-opacity': 0,
+                'line-width': 10,
+                'line-color': "#000000"
+            },
+        });
+        map.addLayer({
+            "id": "symbols",
+            "type": "symbol",
+            "source": "tileset",
+            "source-layer": 'power_line',
+            "layout": {
+                "symbol-placement": "line",
+                "text-font": ["Open Sans Regular"],
+                "text-field": [
+                    "case",
+                    ["has", "voltage"],
+                    ["concat", ['get', 'voltage'], ' kV'],
+                    "Unknown voltage"
+                ],
+                "text-size": 16
+            }
+        });
+        //^using: https://stackoverflow.com/a/40891062/8565438
+        const popup = new mapboxgl.Popup({
+            closeButton: true,
+            closeOnClick: true
+        });
+
+        map.on('click', 'all', (e) => {
+            map.getCanvas().style.cursor = 'pointer';
+
+            const feature = e.features[0];
+
+            let popupContent = '';
+            for (const property in feature.properties) {
+                if (feature.properties[property]!== "") {
+                    popupContent += `<strong>${property}:</strong> ${feature.properties[property]}<br>`;
+                }
+            }
+
+            popup.setLngLat(e.lngLat).setHTML(popupContent).addTo(map);
+        });;
+
+        // Add a hover interaction to change the cursor type.
+        map.on('mouseenter', 'all', function () {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+
+        map.on('mouseleave', 'all', function () {
+            map.getCanvas().style.cursor = '';
+        });
+    };
+
+    map.on('style.load', () => {
+        addLayers();
+    });
+
+
+    const geocoder = new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        mapboxgl: mapboxgl,
+        placeholder: "Search for a location"
+    });
+
+    map.addControl(geocoder)
+
+    const layerList = document.getElementById('menu');
+    const inputs = layerList.getElementsByTagName('input');
+
+    for (const input of inputs) {
+        input.onclick = (layer) => {
+            const layerId = layer.target.id;
+            map.setStyle('mapbox://styles/mapbox/' + layerId);
+        };
+    }
+</script>
+
+</body>
+</html>
