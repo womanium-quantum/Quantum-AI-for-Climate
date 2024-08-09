@@ -1,6 +1,5 @@
 """
-Created by Ben Kroul, in 2024
-
+~~~~ Created by Ben Kroul, 2024 ~~~
 Defines useful utility functions and constants for quantum physics related things. Of note:
 - plot_op and plot_theory_exp for plotting 2D operators and comparing theoretical vs experimental operators
 - pauli matrices defined like pauli_e, sigma_g, etc.

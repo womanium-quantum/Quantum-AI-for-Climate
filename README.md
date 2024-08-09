@@ -49,7 +49,8 @@ Team Member 4:
  - Womanium Program Enrollment ID: WQ24-
 
 ### Project Solution:
-In this project we demonstrate the potential of quantum computing in optimizing modern electrical grid systems. The overarching goal was twofold: first, to implement state-of-the-art quantum optimization methods that show significant promise in accelerating electrical grid operations in the near future, even on noisy intermediate-scale quantum computers, 
+In this project we demonstrate the potential of quantum computing in optimizing modern electrical grid systems. The overarching goal was twofold: first, to implement state-of-the-art quantum optimization methods that show significant promise in accelerating electrical grid operations in the near future, even on noisy intermediate-scale quantum computers (NISQ), and second, to make a platform that demystifies both electrical grid management and its optimization and allows everyone the access to interact with and learn from these optimizations.
+
 We want to make an accessible portal to show others this potential and pave a pathway for current grid providers to consider quantum computing solutions when planning grid modernization. 
 
 1. Translate from inputs of OSM power data or ___ to a `pandapower` network

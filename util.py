@@ -1,6 +1,5 @@
 """
-Created by Ben Kroul, in 2024
-
+~~~~ Created by Ben Kroul, 2024 ~~~~
 Defines useful utility functions and constants. Run printModule(util) after importing to see full list of imports.
 - CVALS: object of physics constants
 - printModule
