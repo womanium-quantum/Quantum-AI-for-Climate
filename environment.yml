@@ -39,7 +39,7 @@ dependencies:
 #    - classiq  
   # or qiskit:
 #  - qiskit-terra  # conda-forge::
-#  - dwave-ocean-sdk
+  - dwave-ocean-sdk
 # OTHERS
 #  - pyvis   # conda-forge::
 #  - pytorch  # for GNN
